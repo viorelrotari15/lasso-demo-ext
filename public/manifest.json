@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Lasso Demo Extension",
+  "version": "0.1.0",
+  "description": "intercept fetch requests and anonymize email addresses",
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_title": "Lasso Demo"
+  },
+  "options_ui": {
+    "page": "src/options/index.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "src/background/background.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/content.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://chatgpt.com/*"],
+      "js": ["src/content/intercept-fetch.ts"],
+      "run_at": "document_start"
+    }
+  ],
+  
+  "permissions": ["storage", "tabs", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "web_accessible_resources": [
+    {
+      "matches": ["<all_urls>"],
+      "resources": ["injected-script.js", "src/injected-script.ts"]
+    }
+  ]
+}
