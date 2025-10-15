@@ -15,5 +15,3 @@ script.onerror = () => {
 };
 
 (document.head || document.documentElement).appendChild(script);
-
-console.log("[Extension] Content script loaded, injecting fetch interceptor script.");

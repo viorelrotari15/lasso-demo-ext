@@ -15,4 +15,26 @@ import browser from 'webextension-polyfill';
   document.documentElement.appendChild(badge);
 
   browser.runtime.sendMessage({ type: 'PING' }).catch(() => {});
+
+  window.addEventListener('message', async (event) => {
+    if (event.source !== window) return;
+    
+    if (event.data && event.data.type === 'captured-request') {
+      try {
+        const response = await browser.runtime.sendMessage(event.data);
+        
+        window.postMessage({
+          type: 'captured-request-response',
+          requestId: event.data.requestId,
+          response: response
+        }, '*');
+      } catch (error) {        
+        window.postMessage({
+          type: 'captured-request-response',
+          requestId: event.data.requestId,
+          response: { hasEmails: false, error: error instanceof Error ? error.message : 'Unknown error' }
+        }, '*');
+      }
+    }
+  });
 })();
